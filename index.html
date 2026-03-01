@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>shreky | Cloud Elite v11.4</title>
+    <title>shreky | Elite Cloud v11.5</title>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700;800&family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
@@ -11,48 +11,39 @@
 
     <style>
         :root { --main: #00f3ff; --accent: #7000ff; --bg: #010103; --glass: rgba(10, 15, 25, 0.9); }
-        * { box-sizing: border-box; cursor: crosshair; transition: all 0.3s ease; }
+        * { box-sizing: border-box; cursor: crosshair; transition: 0.3s; }
         body { margin: 0; background: var(--bg); color: white; font-family: 'Assistant', sans-serif; overflow-x: hidden; }
         
         #canvas-bg { position: fixed; top: 0; left: 0; z-index: -1; width: 100%; height: 100%; opacity: 0.2; }
         .grid-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px); background-size: 40px 40px; z-index: -1; }
 
-        /* Global Msg */
-        #global-msg { 
-            display: none; background: linear-gradient(90deg, var(--accent), var(--main)); 
-            color: white; text-align: center; padding: 12px; font-family: 'Orbitron'; 
-            font-size: 0.9rem; font-weight: 900; position: sticky; top: 0; z-index: 2000; box-shadow: 0 0 20px var(--main);
-        }
+        #global-msg { display: none; background: linear-gradient(90deg, var(--accent), var(--main)); color: white; text-align: center; padding: 12px; font-family: 'Orbitron'; font-size: 0.9rem; font-weight: 900; position: sticky; top: 0; z-index: 2000; box-shadow: 0 0 20px var(--main); }
 
         header { padding: 60px 20px 20px; text-align: center; }
         .glitch { font-family: 'Orbitron'; font-size: 5rem; font-weight: 900; letter-spacing: 12px; text-shadow: 0 0 20px var(--main); text-transform: uppercase; }
         
         .container { max-width: 1000px; margin: 0 auto; padding: 0 20px 100px; }
         .glass-card { background: var(--glass); border: 1px solid rgba(0, 243, 255, 0.1); border-radius: 20px; padding: 30px; margin-bottom: 25px; backdrop-filter: blur(15px); }
-
         .section-title { font-family: 'Orbitron'; color: var(--main); font-size: 0.9rem; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; letter-spacing: 3px; }
         .section-title::after { content: ''; height: 1px; flex: 1; background: linear-gradient(90deg, var(--main), transparent); }
 
-        /* Pricing */
         .price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
         .price-card { background: rgba(0,0,0,0.4); border: 1px solid #222; padding: 20px; border-radius: 15px; text-align: center; border-bottom: 3px solid var(--main); }
         .price-val { display: block; font-family: 'Orbitron'; font-size: 1.4rem; color: var(--main); margin-top: 5px; }
 
-        /* Dynamic Grids */
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
         .item-card { background: rgba(255,255,255,0.02); padding: 20px; border-radius: 15px; border: 1px solid #333; text-align: center; }
-        .item-card:hover { border-color: var(--main); transform: translateY(-5px); }
         
         .pfp-box { width: 70px; height: 70px; background: #000; border: 2px solid var(--main); border-radius: 50%; margin: 0 auto 15px; overflow: hidden; display: flex; align-items: center; justify-content: center; font-family: 'Orbitron'; box-shadow: 0 0 10px var(--main); }
         .pfp-box img { width: 100%; height: 100%; object-fit: cover; }
 
-        .btn-link { padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 900; font-family: 'Orbitron'; font-size: 0.75rem; display: inline-block; margin: 10px; }
-        .btn-discord { background: #5865F2; color: white; box-shadow: 0 0 15px rgba(88,101,242,0.3); }
-        .btn-roblox { background: white; color: black; }
+        .links-bar { display: flex; justify-content: center; gap: 15px; margin-top: 50px; flex-wrap: wrap; }
+        .btn-link { padding: 12px 35px; border-radius: 10px; text-decoration: none; font-weight: 900; font-family: 'Orbitron'; font-size: 0.75rem; color: white; border: 1px solid rgba(255,255,255,0.1); }
+        .btn-discord { background: #5865F2; }
+        .btn-roblox { background: #000; border: 1px solid white; }
+        .btn-link:hover { transform: translateY(-5px); box-shadow: 0 5px 20px var(--main); }
 
-        /* Admin */
         #admin-panel { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #050508; z-index: 100000; padding: 40px; direction: rtl; overflow-y: auto; }
-        .admin-box { max-width: 800px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .p-input { width: 100%; padding: 12px; margin: 8px 0; background: #111; border: 1px solid #333; color: var(--main); border-radius: 8px; }
         .p-btn { width: 100%; padding: 12px; background: var(--main); color: black; border: none; border-radius: 8px; font-weight: 900; cursor: pointer; margin-top: 5px; }
     </style>
@@ -65,11 +56,10 @@
 
 <header>
     <div class="glitch">shreky</div>
-    <p style="color: var(--main); letter-spacing: 5px; font-size: 0.7rem;">[ CLOUD_INTERFACE_v11.4 ]</p>
+    <p style="color: var(--main); letter-spacing: 5px; font-size: 0.7rem;">[ CLOUD_INTERFACE_v11.5 ]</p>
 </header>
 
 <div class="container">
-    
     <div class="glass-card">
         <h2 class="section-title">COMMISSION_RATES</h2>
         <div class="price-grid">
@@ -95,39 +85,35 @@
         <div class="grid" id="team-list"></div>
     </div>
 
-    <center style="margin-top: 50px;">
-        <a href="https://discord.com/users/1251423970474065967" target="_blank" class="btn-link btn-discord">DISCORD</a>
-        <a href="https://www.roblox.com/users/10023243514/profile" target="_blank" class="btn-link btn-roblox">ROBLOX</a>
-    </center>
+    <div class="links-bar">
+        <a id="lnk-discord" href="https://discord.com/users/1251423970474065967" target="_blank" class="btn-link btn-discord">DISCORD DM</a>
+        <a id="lnk-roblox" href="https://www.roblox.com/users/10023243514/profile" target="_blank" class="btn-link btn-roblox">ROBLOX</a>
+    </div>
 </div>
 
 <div id="admin-panel">
     <h1 style="text-align:center; color:var(--main); font-family:'Orbitron'">CORE_OVERRIDE</h1>
-    <div class="admin-box">
+    <div style="max-width: 800px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
         <div class="item-card" style="grid-column: span 2;">
-            <h3>📢 הודעה גלובלית</h3>
-            <input type="text" id="adm-msg" class="p-input" placeholder="כתוב הודעה לכל האתרים">
-            <button class="p-btn" onclick="saveMsg()">פרסם הודעה</button>
+            <h3>🔗 קישורים חברתיים</h3>
+            <input type="text" id="adm-disc" class="p-input" placeholder="לינק לדיסקורד (או שרת)">
+            <input type="text" id="adm-robl" class="p-input" placeholder="לינק לפרופיל רובלוקס">
+            <button class="p-btn" onclick="saveLinks()">עדכן קישורים</button>
         </div>
         <div class="item-card">
-            <h3>🚀 עדכון פרויקט</h3>
-            <input type="text" id="adm-p-name" class="p-input" placeholder="שם המשחק">
-            <input type="number" id="adm-p-val" class="p-input" placeholder="אחוז (0-100)">
-            <button class="p-btn" onclick="saveProject()">עדכן</button>
+            <h3>📢 הודעה ופרויקט</h3>
+            <input type="text" id="adm-msg" class="p-input" placeholder="הודעה גלובלית">
+            <button class="p-btn" onclick="saveMsg()">פרסם</button>
+            <input type="text" id="adm-p-name" class="p-input" placeholder="שם פרויקט">
+            <input type="number" id="adm-p-val" class="p-input" placeholder="%">
+            <button class="p-btn" onclick="saveProject()">עדכן פרויקט</button>
         </div>
         <div class="item-card">
-            <h3>👥 הוספת צוות</h3>
-            <input type="text" id="adm-t-name" class="p-input" placeholder="שם">
-            <input type="text" id="adm-t-role" class="p-input" placeholder="תפקיד">
-            <input type="text" id="adm-t-img" class="p-input" placeholder="לינק לתמונה">
-            <button class="p-btn" onclick="addTeam()">הוסף</button>
-        </div>
-        <div class="item-card" style="grid-column: span 2;">
-            <h3>📦 הוספת סקריפט</h3>
-            <input type="text" id="adm-a-name" class="p-input" placeholder="שם הסקריפט">
-            <input type="text" id="adm-a-url" class="p-input" placeholder="קישור">
+            <h3>👥 צוות וסקריפטים</h3>
+            <button class="p-btn" onclick="addTeam()">הוסף צוות (מהשדות למטה)</button>
+            <input type="text" id="adm-t-name" class="p-input" placeholder="שם/תפקיד/תמונה...">
             <button class="p-btn" onclick="addAsset()">הוסף סקריפט</button>
-            <button class="p-btn" style="background:#ff4444;" onclick="clearCloud()">מחק הכל (RESET)</button>
+            <button class="p-btn" style="background:#ff4444;" onclick="clearCloud()">RESET ALL</button>
         </div>
     </div>
     <center><button class="p-btn" onclick="document.getElementById('admin-panel').style.display='none'" style="width:200px; margin-top:20px;">סגור</button></center>
@@ -146,14 +132,21 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // -- CLOUD FUNCTIONS --
+    // Cloud Logic
+    function saveLinks() { db.ref('links').set({ discord: document.getElementById('adm-disc').value, roblox: document.getElementById('adm-robl').value }); }
     function saveMsg() { db.ref('announcement').set(document.getElementById('adm-msg').value); }
     function saveProject() { db.ref('project').set({ name: document.getElementById('adm-p-name').value, perc: document.getElementById('adm-p-val').value }); }
-    function addTeam() { db.ref('team').push({ name: document.getElementById('adm-t-name').value, role: document.getElementById('adm-t-role').value, img: document.getElementById('adm-t-img').value }); }
-    function addAsset() { db.ref('assets').push({ name: document.getElementById('adm-a-name').value, url: document.getElementById('adm-a-url').value }); }
-    function clearCloud() { if(confirm("למחוק הכל?")) { db.ref('team').remove(); db.ref('assets').remove(); db.ref('announcement').remove(); } }
+    function clearCloud() { if(confirm("Reset?")) db.ref().remove(); }
 
-    // -- LIVE SYNC --
+    // Sync Links
+    db.ref('links').on('value', snap => {
+        const l = snap.val();
+        if(l) {
+            if(l.discord) document.getElementById('lnk-discord').href = l.discord;
+            if(l.roblox) document.getElementById('lnk-roblox').href = l.roblox;
+        }
+    });
+
     db.ref('announcement').on('value', snap => {
         const bar = document.getElementById('global-msg');
         bar.innerText = snap.val() || "";
@@ -166,33 +159,30 @@
     });
 
     db.ref('team').on('value', snap => {
-        const list = document.getElementById('team-list');
         const sec = document.getElementById('team-sec');
-        list.innerHTML = "";
+        document.getElementById('team-list').innerHTML = "";
         if(snap.exists()) {
             sec.style.display = 'block';
             snap.forEach(c => {
                 const v = c.val();
-                const pfp = v.img ? `<img src="${v.img}">` : v.name[0];
-                list.innerHTML += `<div class="item-card"><div class="pfp-box">${pfp}</div><h4>${v.name}</h4><p style="font-size:0.8rem; color:var(--main)">${v.role}</p></div>`;
+                const pfp = v.img ? `<img src="${v.img}">` : (v.name ? v.name[0] : "?");
+                document.getElementById('team-list').innerHTML += `<div class="item-card"><div class="pfp-box">${pfp}</div><h4>${v.name}</h4><p style="color:var(--main);font-size:0.8rem;">${v.role}</p></div>`;
             });
         } else { sec.style.display = 'none'; }
     });
 
     db.ref('assets').on('value', snap => {
-        const list = document.getElementById('assets-list');
         const sec = document.getElementById('assets-sec');
-        list.innerHTML = "";
+        document.getElementById('assets-list').innerHTML = "";
         if(snap.exists()) {
             sec.style.display = 'block';
             snap.forEach(c => {
                 const v = c.val();
-                list.innerHTML += `<div class="item-card"><h4>${v.name}</h4><a href="${v.url}" target="_blank" style="color:var(--main); font-size:0.7rem;">VIEW SOURCE</a></div>`;
+                document.getElementById('assets-list').innerHTML += `<div class="item-card"><h4>${v.name}</h4><a href="${v.url}" target="_blank" style="color:var(--main);font-size:0.7rem;">VIEW SOURCE</a></div>`;
             });
         } else { sec.style.display = 'none'; }
     });
 
-    // -- CORE --
     function init() {
         const canvas = document.getElementById('canvas-bg');
         const ctx = canvas.getContext('2d');
