@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>shreky | Cloud Terminal v11.0</title>
+    <title>shreky | Cloud Studio v11.1</title>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700;800&family=Orbitron:wght@400;900&family=Courier+Prime&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
@@ -15,12 +15,10 @@
         body { margin: 0; background: var(--bg); color: white; font-family: 'Assistant', sans-serif; overflow-x: hidden; }
         #canvas-bg { position: fixed; top: 0; left: 0; z-index: -1; width: 100%; height: 100%; opacity: 0.3; }
         
-        /* Global Announcement Bar */
         #global-msg { 
             display: none; background: linear-gradient(90deg, var(--accent), var(--main)); 
             color: white; text-align: center; padding: 12px; font-family: 'Orbitron'; 
-            font-size: 0.9rem; font-weight: 900; letter-spacing: 2px; position: sticky; top: 0; z-index: 2000;
-            box-shadow: 0 5px 20px rgba(0, 243, 255, 0.4);
+            font-size: 0.9rem; font-weight: 900; position: sticky; top: 0; z-index: 2000;
         }
 
         header { padding: 40px 20px 20px; text-align: center; }
@@ -30,29 +28,32 @@
         .section-title { font-family: 'Orbitron'; color: var(--main); font-size: 1.1rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; letter-spacing: 2px; }
         .section-title::after { content: ''; height: 1px; flex: 1; background: linear-gradient(90deg, var(--main), transparent); }
 
-        /* Progress Bar */
         .progress-wrap { background: #000; height: 12px; border-radius: 20px; margin: 15px 0; border: 1px solid #222; overflow: hidden; }
         #p-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--main)); width: 0%; transition: 1.5s ease; }
 
-        /* Grids */
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
-        .item-card { background: rgba(255,255,255,0.02); padding: 20px; border-radius: 20px; border: 1px solid #222; text-align: center; }
-        .view-btn { display: inline-block; margin-top: 10px; padding: 8px 15px; background: var(--main); color: black; text-decoration: none; border-radius: 8px; font-weight: 900; font-size: 0.7rem; }
+        .item-card { background: rgba(255,255,255,0.02); padding: 20px; border-radius: 20px; border: 1px solid #222; text-align: center; transition: 0.3s; }
+        .item-card:hover { border-color: var(--main); }
+        
+        /* Team Styles */
+        .pfp-box { width: 70px; height: 70px; background: #000; border: 2px solid var(--main); border-radius: 50%; margin: 0 auto 15px; overflow: hidden; display: flex; align-items: center; justify-content: center; font-family: 'Orbitron'; font-size: 1.5rem; box-shadow: 0 0 10px var(--main); }
+        .pfp-box img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* Admin UI */
         #admin-panel { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #050508; z-index: 100000; padding: 40px; direction: rtl; overflow-y: auto; }
         .p-input { width: 100%; padding: 12px; margin: 8px 0; background: #111; border: 1px solid #333; color: var(--main); border-radius: 8px; }
         .p-btn { width: 100%; padding: 15px; background: var(--main); color: black; border: none; border-radius: 10px; font-weight: 900; cursor: pointer; margin-bottom: 10px; }
+        
+        .view-btn { display: inline-block; margin-top: 10px; padding: 8px 15px; background: var(--main); color: black; text-decoration: none; border-radius: 8px; font-weight: 900; font-size: 0.7rem; }
     </style>
 </head>
 <body onload="init()">
 
-<div id="global-msg">LOADING LIVE DATA...</div>
+<div id="global-msg"></div>
 <canvas id="canvas-bg"></canvas>
 
 <header>
     <div class="glitch">shreky</div>
-    <p style="color: var(--main); letter-spacing: 5px;">[ CLOUD SYSTEM ACTIVE ]</p>
+    <p style="color: var(--main); letter-spacing: 5px;">[ CLOUD v11.1 / TEAM RESTORED ]</p>
 </header>
 
 <div class="container">
@@ -64,46 +65,57 @@
     </div>
 
     <div class="glass-card">
-        <h2 class="section-title">CLOUD_ASSETS</h2>
+        <h2 class="section-title">SCRIPT_ARCHIVE</h2>
         <div class="grid" id="assets-list"></div>
     </div>
 
-    <div style="text-align: center; opacity: 0.5; font-size: 0.8rem;">PRESS 'A' TO ACCESS CORE</div>
+    <div class="glass-card">
+        <h2 class="section-title">VERIFIED_OPERATORS</h2>
+        <div class="grid" id="team-list"></div>
+    </div>
 </div>
 
 <div id="admin-panel">
     <h1 style="text-align:center; color:var(--main); font-family: 'Orbitron';">GLOBAL CONTROL</h1>
-    <div style="max-width: 600px; margin: 0 auto;">
+    <div style="max-width: 800px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        
         <div class="glass-card" style="display:block;">
-            <h3>📢 הודעה גלובלית (לכל האתרים)</h3>
-            <input type="text" id="set-msg" class="p-input" placeholder="הודעה חדשה">
-            <button class="p-btn" onclick="publishMsg()">שלח הודעה לכולם</button>
-        </div>
-        <div class="glass-card" style="display:block;">
-            <h3>🚀 עדכון פרויקט</h3>
+            <h3>📢 הודעה ופרויקט</h3>
+            <input type="text" id="set-msg" class="p-input" placeholder="הודעה גלובלית">
+            <button class="p-btn" onclick="publishMsg()">שלח הודעה</button>
+            <hr style="opacity:0.1; margin: 20px 0;">
             <input type="text" id="set-p-name" class="p-input" placeholder="שם המשחק">
             <input type="number" id="set-p-val" class="p-input" placeholder="אחוז">
-            <button class="p-btn" onclick="publishProject()">עדכן פרויקט לכולם</button>
+            <button class="p-btn" onclick="publishProject()">עדכן פרויקט</button>
         </div>
+
         <div class="glass-card" style="display:block;">
+            <h3>👥 ניהול צוות</h3>
+            <input type="text" id="set-t-name" class="p-input" placeholder="שם איש הצוות">
+            <input type="text" id="set-t-role" class="p-input" placeholder="תפקיד">
+            <input type="text" id="set-t-img" class="p-input" placeholder="לינק לתמונה (אופציונלי)">
+            <button class="p-btn" onclick="publishTeam()">הוסף לצוות</button>
+            <button class="p-btn" style="background: #ff4444;" onclick="clearTeam()">אפס צוות</button>
+        </div>
+
+        <div class="glass-card" style="display:block; grid-column: span 2;">
             <h3>📦 הוספת סקריפט</h3>
             <input type="text" id="set-a-name" class="p-input" placeholder="שם הסקריפט">
             <input type="text" id="set-a-url" class="p-input" placeholder="לינק לקוד">
-            <button class="p-btn" onclick="publishAsset()">הוסף סקריפט לכולם</button>
-            <button class="p-btn" style="background: #ff4444;" onclick="clearAssets()">מחק את כל הסקריפטים</button>
+            <button class="p-btn" onclick="publishAsset()">הוסף לאתר</button>
+            <button class="p-btn" style="background: #ff4444;" onclick="clearAssets()">מחק הכל</button>
         </div>
     </div>
-    <center><button class="p-btn" onclick="closeAdmin()" style="width:200px; background:#222; color:white;">סגור פאנל</button></center>
+    <center><button class="p-btn" onclick="closeAdmin()" style="width:200px; background:#222; color:white;">סגור</button></center>
 </div>
 
 <script>
-    // --- FIREBASE SETUP ---
     const firebaseConfig = {
         apiKey: "AIzaSyCpwCO_lBeob2ZyWq-zQJJGwwMhOvNFUW0",
         authDomain: "shrekystudio.firebaseapp.com",
         projectId: "shrekystudio",
         storageBucket: "shrekystudio.firebasestorage.app",
-        databaseURL: "https://shrekystudio-default-rtdb.firebaseio.com", // וודא שזה הלינק מה-Console שלך
+        databaseURL: "https://shrekystudio-default-rtdb.firebaseio.com",
         messagingSenderId: "201919135674",
         appId: "1:201919135674:web:fe7af0b2f00d6ff7662783"
     };
@@ -111,58 +123,66 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // --- LIVE SYNC LOGIC ---
-
-    // 1. הודעה גלובלית
-    function publishMsg() {
-        const val = document.getElementById('set-msg').value;
-        db.ref('announcement').set(val);
-    }
-    db.ref('announcement').on('value', (snap) => {
+    // Live Sync: Announcement
+    function publishMsg() { db.ref('announcement').set(document.getElementById('set-msg').value); }
+    db.ref('announcement').on('value', snap => {
         const bar = document.getElementById('global-msg');
-        if(snap.val()) { bar.innerText = snap.val(); bar.style.display = 'block'; }
-        else { bar.style.display = 'none'; }
+        bar.innerText = snap.val() || "";
+        bar.style.display = snap.val() ? 'block' : 'none';
     });
 
-    // 2. פרויקט חי
+    // Live Sync: Project
     function publishProject() {
-        const name = document.getElementById('set-p-name').value;
-        const perc = document.getElementById('set-p-val').value;
-        db.ref('project').set({ name, perc });
+        db.ref('project').set({ name: document.getElementById('set-p-name').value, perc: document.getElementById('set-p-val').value });
     }
-    db.ref('project').on('value', (snap) => {
-        const data = snap.val();
-        if(data) {
-            document.getElementById('p-title').innerText = data.name;
-            document.getElementById('p-bar-fill').style.width = data.perc + "%";
-            document.getElementById('p-percent').innerText = data.perc + "%";
+    db.ref('project').on('value', snap => {
+        const d = snap.val();
+        if(d) {
+            document.getElementById('p-title').innerText = d.name;
+            document.getElementById('p-bar-fill').style.width = d.perc + "%";
+            document.getElementById('p-percent').innerText = d.perc + "%";
         }
     });
 
-    // 3. סקריפטים (מערך בענן)
-    function publishAsset() {
-        const name = document.getElementById('set-a-name').value;
-        const url = document.getElementById('set-a-url').value || "#";
-        db.ref('assets').push({ name, url });
+    // Live Sync: Team
+    function publishTeam() {
+        const name = document.getElementById('set-t-name').value;
+        const role = document.getElementById('set-t-role').value;
+        const img = document.getElementById('set-t-img').value || "";
+        if(name) db.ref('team').push({ name, role, img });
     }
-    function clearAssets() { if(confirm("למחוק הכל?")) db.ref('assets').remove(); }
-
-    db.ref('assets').on('value', (snap) => {
-        const list = document.getElementById('assets-list');
+    function clearTeam() { if(confirm("למחוק צוות?")) db.ref('team').remove(); }
+    db.ref('team').on('value', snap => {
+        const list = document.getElementById('team-list');
         list.innerHTML = "";
-        snap.forEach((child) => {
-            const asset = child.val();
-            list.innerHTML += `<div class="item-card"><h4>${asset.name}</h4><a href="${asset.url}" target="_blank" class="view-btn">VIEW SOURCE</a></div>`;
+        snap.forEach(child => {
+            const m = child.val();
+            const pfp = m.img ? `<img src="${m.img}">` : m.name.charAt(0).toUpperCase();
+            list.innerHTML += `<div class="item-card"><div class="pfp-box">${pfp}</div><h4>${m.name}</h4><p style="color:var(--main); font-size:0.8rem;">${m.role}</p></div>`;
         });
     });
 
-    // --- UI LOGIC ---
+    // Live Sync: Assets
+    function publishAsset() {
+        const name = document.getElementById('set-a-name').value;
+        const url = document.getElementById('set-a-url').value || "#";
+        if(name) db.ref('assets').push({ name, url });
+    }
+    function clearAssets() { if(confirm("למחוק סקריפטים?")) db.ref('assets').remove(); }
+    db.ref('assets').on('value', snap => {
+        const list = document.getElementById('assets-list');
+        list.innerHTML = "";
+        snap.forEach(child => {
+            const a = child.val();
+            list.innerHTML += `<div class="item-card"><h4>${a.name}</h4><a href="${a.url}" target="_blank" class="view-btn">VIEW SOURCE</a></div>`;
+        });
+    });
+
     function init() {
         const canvas = document.getElementById('canvas-bg');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        let p = [];
-        for(let i=0; i<60; i++) p.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, s: Math.random()*2});
+        let p = []; for(let i=0; i<60; i++) p.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, s: Math.random()*2});
         function draw() {
             ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = "#00f3ff";
             p.forEach(dot => { dot.y -= 0.4; if(dot.y < 0) dot.y = canvas.height; ctx.beginPath(); ctx.arc(dot.x, dot.y, dot.s, 0, Math.PI*2); ctx.fill(); });
@@ -171,8 +191,8 @@
         draw();
     }
 
-    document.addEventListener('keydown', (e) => { if(e.key === 'a' || e.key === 'A') openAdmin(); });
-    function openAdmin() { if(prompt("ACCESS CODE:") === "678678678") document.getElementById('admin-panel').style.display = 'block'; }
+    document.addEventListener('keydown', e => { if(e.key === 'a' || e.key === 'A') openAdmin(); });
+    function openAdmin() { if(prompt("CODE:") === "678678678") document.getElementById('admin-panel').style.display = 'block'; }
     function closeAdmin() { document.getElementById('admin-panel').style.display = 'none'; }
 </script>
 </body>
