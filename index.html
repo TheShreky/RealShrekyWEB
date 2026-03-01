@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>shreky | Elite Studio v10.7</title>
+    <title>shreky | Elite Terminal v10.8</title>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700;800&family=Orbitron:wght@400;900&family=Courier+Prime&display=swap" rel="stylesheet">
     <style>
         :root { --main: #00f3ff; --accent: #7000ff; --bg: #010103; --glass: rgba(10, 10, 15, 0.95); }
@@ -11,9 +11,16 @@
         body { margin: 0; background: var(--bg); color: white; font-family: 'Assistant', sans-serif; overflow-x: hidden; }
         
         #canvas-bg { position: fixed; top: 0; left: 0; z-index: -1; width: 100%; height: 100%; opacity: 0.3; }
-        .scanner { position: fixed; top: 0; left: 0; width: 100%; height: 2px; background: rgba(0, 243, 255, 0.4); box-shadow: 0 0 15px var(--main); z-index: 100; animation: scan 4s linear infinite; pointer-events: none; }
+        
+        /* Global Announcement Bar */
+        #global-msg { 
+            display: none; background: linear-gradient(90deg, var(--accent), var(--main)); 
+            color: white; text-align: center; padding: 10px; font-family: 'Orbitron'; 
+            font-size: 0.9rem; font-weight: 900; letter-spacing: 2px; box-shadow: 0 5px 15px rgba(0, 243, 255, 0.3);
+            position: sticky; top: 0; z-index: 2000;
+        }
 
-        header { padding: 60px 20px 20px; text-align: center; }
+        header { padding: 40px 20px 20px; text-align: center; }
         .glitch { font-family: 'Orbitron'; font-size: 5rem; font-weight: 900; letter-spacing: 12px; text-shadow: 0 0 20px var(--main); text-transform: uppercase; }
         
         .container { max-width: 1100px; margin: 0 auto; padding: 0 40px 100px; }
@@ -30,18 +37,14 @@
         #assets-sec { display: none; }
         .assets-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; }
         .asset-card { background: rgba(255,255,255,0.02); padding: 20px; border-radius: 20px; border: 1px solid #222; transition: 0.3s; text-align: center; }
-        .asset-card:hover { border-color: var(--main); transform: translateY(-3px); }
-        .view-btn { display: inline-block; margin-top: 15px; padding: 10px 20px; background: var(--main); color: black; text-decoration: none; border-radius: 10px; font-family: 'Orbitron'; font-size: 0.75rem; font-weight: 900; transition: 0.3s; }
-        .view-btn:hover { background: white; transform: scale(1.05); }
+        .view-btn { display: inline-block; margin-top: 15px; padding: 10px 20px; background: var(--main); color: black; text-decoration: none; border-radius: 10px; font-family: 'Orbitron'; font-size: 0.75rem; font-weight: 900; }
 
         /* Team */
         #team-sec { display: none; }
         .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
         .member-box { background: rgba(0, 243, 255, 0.02); padding: 25px; border-radius: 20px; text-align: center; border: 1px solid rgba(0, 243, 255, 0.2); }
-        .pfp-box { width: 80px; height: 80px; background: #000; border: 2px solid var(--main); border-radius: 50%; margin: 0 auto 15px; overflow: hidden; box-shadow: 0 0 15px var(--main); display: flex; align-items: center; justify-content: center; font-family: 'Orbitron'; font-size: 1.5rem; }
+        .pfp-box { width: 80px; height: 80px; background: #000; border: 2px solid var(--main); border-radius: 50%; margin: 0 auto 15px; overflow: hidden; display: flex; align-items: center; justify-content: center; font-family: 'Orbitron'; font-size: 1.5rem; }
         .pfp-box img { width: 100%; height: 100%; object-fit: cover; }
-
-        .ticker { position: fixed; bottom: 0; width: 100%; background: rgba(0,0,0,0.8); padding: 10px; border-top: 1px solid var(--main); font-family: 'Courier Prime'; font-size: 0.8rem; color: var(--main); z-index: 1000; }
 
         .links-bar { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
         .btn-link { padding: 15px 30px; border-radius: 12px; text-decoration: none; font-weight: 900; font-family: 'Orbitron'; font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.1); }
@@ -53,46 +56,24 @@
         .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1000px; margin: 0 auto; }
         .p-input { width: 100%; padding: 12px; margin: 8px 0; background: #111; border: 1px solid #333; color: var(--main); border-radius: 8px; }
         .p-btn { width: 100%; padding: 15px; background: var(--main); color: black; border: none; border-radius: 10px; font-weight: 900; cursor: pointer; }
-
-        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
     </style>
 </head>
 <body onload="init()">
 
-<div class="scanner"></div>
+<div id="global-msg"></div>
 <canvas id="canvas-bg"></canvas>
-
-<div class="ticker">
-    <marquee scrollamount="5">>> STATUS: ONLINE | READY FOR COMMISSIONS | FULL GAME SLOTS: AVAILABLE <<</marquee>
-</div>
 
 <header>
     <div class="glitch">shreky</div>
-    <p style="color: var(--main); letter-spacing: 5px;">[ SYSTEM v10.7 ]</p>
+    <p style="color: var(--main); letter-spacing: 5px;">[ SYSTEM v10.8 ]</p>
 </header>
 
 <div class="container">
-    
     <div class="glass-card">
         <h2 class="section-title">ACTIVE_TASK</h2>
-        <h3 id="p-title" style="margin: 0; font-family: 'Orbitron';">Waiting for Data...</h3>
+        <h3 id="p-title" style="margin: 0; font-family: 'Orbitron';">System Awaiting Setup...</h3>
         <div class="progress-wrap"><div id="p-bar-fill"></div></div>
         <p>PROGRESS: <span id="p-percent" style="color: var(--main);">0%</span></p>
-    </div>
-
-    <div class="glass-card">
-        <h2 class="section-title">COMMISSION_RATES</h2>
-        <div class="price-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-            <div style="background:rgba(255,255,255,0.01); border:1px solid #222; padding:20px; border-radius:20px; text-align:center;">
-                <h4 style="margin:0; color:var(--main);">BASIC</h4><p id="pr-1">R$ 1,500+</p>
-            </div>
-            <div style="background:rgba(255,255,255,0.01); border:1px solid #222; padding:20px; border-radius:20px; text-align:center;">
-                <h4 style="margin:0; color:var(--main);">ADVANCED</h4><p id="pr-2">R$ 5,000+</p>
-            </div>
-            <div style="background:rgba(0, 243, 255, 0.05); border:1px solid var(--main); padding:20px; border-radius:20px; text-align:center;">
-                <h4 style="margin:0; color:var(--main);">FULL GAME</h4><p id="pr-full">R$ 25,000+</p>
-            </div>
-        </div>
     </div>
 
     <div class="glass-card" id="assets-sec">
@@ -114,6 +95,11 @@
 <div id="admin-panel">
     <h1 style="text-align:center; color:var(--main);">TERMINAL_OVERRIDE</h1>
     <div class="admin-grid">
+        <div class="glass-card" style="display:block; grid-column: span 2;">
+            <h3>📢 הודעה גלובלית</h3>
+            <input type="text" id="set-msg" class="p-input" placeholder="מה ההודעה שלך? (למשל: סיימנו את הפרויקט!)">
+            <button class="p-btn" onclick="updateGlobalMsg()">פרסם הודעה</button>
+        </div>
         <div class="glass-card" style="display:block;">
             <h3>🚀 ניהול פרויקט</h3>
             <input type="text" id="set-p-name" class="p-input" placeholder="שם המשחק">
@@ -124,25 +110,16 @@
             <h3>👥 הוספת צוות</h3>
             <input type="text" id="set-t-name" class="p-input" placeholder="שם">
             <input type="text" id="set-t-role" class="p-input" placeholder="תפקיד">
-            <input type="text" id="set-t-img" class="p-input" placeholder="קישור לתמונה">
             <button class="p-btn" onclick="addMember()">הוסף צוות</button>
         </div>
         <div class="glass-card" style="display:block; grid-column: span 2;">
-            <h3>📦 הוספת סקריפט/פרויקט</h3>
+            <h3>📦 הוספת סקריפט</h3>
             <input type="text" id="set-a-name" class="p-input" placeholder="שם הסקריפט">
-            <input type="text" id="set-a-tag" class="p-input" placeholder="תגית (Script / UI / System)">
-            <input type="text" id="set-a-url" class="p-input" placeholder="קישור לקוד (GitHub/Pastebin)">
+            <input type="text" id="set-a-url" class="p-input" placeholder="קישור לקוד">
             <button class="p-btn" onclick="addAsset()">הוסף לאתר</button>
         </div>
-        <div class="glass-card" style="display:block; grid-column: span 2;">
-            <h3>💰 עדכון מחירים</h3>
-            <input type="text" id="set-pr-1" class="p-input" placeholder="מחיר Basic">
-            <input type="text" id="set-pr-2" class="p-input" placeholder="מחיר Advanced">
-            <input type="text" id="set-pr-f" class="p-input" placeholder="מחיר Full Game">
-            <button class="p-btn" onclick="updatePrices()">עדכן הכל</button>
-        </div>
     </div>
-    <center><button class="p-btn" onclick="closeAdmin()" style="width:200px; background:#222; color:white; margin-top:30px;">סגור</button></center>
+    <center><button class="p-btn" onclick="closeAdmin()" style="width:200px; background:#222; color:white; margin-top:30px;">סגור פאנל</button></center>
 </div>
 
 <script>
@@ -164,6 +141,13 @@
     function openAdmin() { if(prompt("CODE:") === "678678678") document.getElementById('admin-panel').style.display = 'block'; }
     function closeAdmin() { document.getElementById('admin-panel').style.display = 'none'; }
 
+    function updateGlobalMsg() {
+        let m = document.getElementById('set-msg').value;
+        let bar = document.getElementById('global-msg');
+        if(m) { bar.innerText = m; bar.style.display = 'block'; }
+        else { bar.style.display = 'none'; }
+    }
+
     function updateProject() {
         let n = document.getElementById('set-p-name').value;
         let v = document.getElementById('set-p-val').value;
@@ -174,41 +158,23 @@
     function addMember() {
         let n = document.getElementById('set-t-name').value;
         let r = document.getElementById('set-t-role').value;
-        let img = document.getElementById('set-t-img').value;
         if(n) {
             document.getElementById('team-sec').style.display = 'block';
             let initial = n.charAt(0).toUpperCase();
-            let pfp = img ? `<img src="${img}">` : initial;
             document.getElementById('team-list').innerHTML += `
-                <div class="member-box">
-                    <div class="pfp-box">${pfp}</div>
-                    <h4>${n}</h4><p style="color:var(--main); font-size:0.8rem;">${r}</p>
-                </div>`;
+                <div class="member-box"><div class="pfp-box">${initial}</div>
+                <h4>${n}</h4><p style="color:var(--main); font-size:0.8rem;">${r}</p></div>`;
         }
     }
 
     function addAsset() {
         let n = document.getElementById('set-a-name').value;
-        let t = document.getElementById('set-a-tag').value;
         let u = document.getElementById('set-a-url').value || "#";
         if(n) {
             document.getElementById('assets-sec').style.display = 'block';
             document.getElementById('assets-list').innerHTML += `
-                <div class="asset-card">
-                    <h4 style="margin:0;">${n}</h4>
-                    <p style="color:var(--main); font-size:0.7rem; margin:5px 0;">${t}</p>
-                    <a href="${u}" target="_blank" class="view-btn">VIEW SOURCE</a>
-                </div>`;
+                <div class="asset-card"><h4>${n}</h4><a href="${u}" target="_blank" class="view-btn">VIEW SOURCE</a></div>`;
         }
-    }
-
-    function updatePrices() {
-        let p1 = document.getElementById('set-pr-1').value;
-        let p2 = document.getElementById('set-pr-2').value;
-        let pf = document.getElementById('set-pr-f').value;
-        if(p1) document.getElementById('pr-1').innerText = "R$ " + p1 + "+";
-        if(p2) document.getElementById('pr-2').innerText = "R$ " + p2 + "+";
-        if(pf) document.getElementById('pr-full').innerText = "R$ " + pf + "+";
     }
 </script>
 </body>
