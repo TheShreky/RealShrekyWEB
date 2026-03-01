@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>shreky | Elite Cloud v11.3</title>
+    <title>shreky | Cloud Elite v11.4</title>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700;800&family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
@@ -11,89 +11,123 @@
 
     <style>
         :root { --main: #00f3ff; --accent: #7000ff; --bg: #010103; --glass: rgba(10, 15, 25, 0.9); }
-        * { box-sizing: border-box; cursor: crosshair; }
+        * { box-sizing: border-box; cursor: crosshair; transition: all 0.3s ease; }
         body { margin: 0; background: var(--bg); color: white; font-family: 'Assistant', sans-serif; overflow-x: hidden; }
         
         #canvas-bg { position: fixed; top: 0; left: 0; z-index: -1; width: 100%; height: 100%; opacity: 0.2; }
-        .grid-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px); background-size: 50px 50px; z-index: -1; }
+        .grid-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px); background-size: 40px 40px; z-index: -1; }
 
-        header { padding: 60px 20px 30px; text-align: center; }
-        .glitch { font-family: 'Orbitron'; font-size: 5rem; font-weight: 900; letter-spacing: 12px; text-shadow: 0 0 20px var(--main); }
+        /* Global Msg */
+        #global-msg { 
+            display: none; background: linear-gradient(90deg, var(--accent), var(--main)); 
+            color: white; text-align: center; padding: 12px; font-family: 'Orbitron'; 
+            font-size: 0.9rem; font-weight: 900; position: sticky; top: 0; z-index: 2000; box-shadow: 0 0 20px var(--main);
+        }
+
+        header { padding: 60px 20px 20px; text-align: center; }
+        .glitch { font-family: 'Orbitron'; font-size: 5rem; font-weight: 900; letter-spacing: 12px; text-shadow: 0 0 20px var(--main); text-transform: uppercase; }
         
         .container { max-width: 1000px; margin: 0 auto; padding: 0 20px 100px; }
-        
-        /* הסתרה כברירת מחדל של המכולות */
-        .dynamic-sec { display: none; background: var(--glass); border: 1px solid rgba(0, 243, 255, 0.1); border-radius: 20px; padding: 30px; margin-bottom: 30px; backdrop-filter: blur(15px); }
+        .glass-card { background: var(--glass); border: 1px solid rgba(0, 243, 255, 0.1); border-radius: 20px; padding: 30px; margin-bottom: 25px; backdrop-filter: blur(15px); }
 
-        .section-title { font-family: 'Orbitron'; color: var(--main); font-size: 1rem; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; }
+        .section-title { font-family: 'Orbitron'; color: var(--main); font-size: 0.9rem; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; letter-spacing: 3px; }
         .section-title::after { content: ''; height: 1px; flex: 1; background: linear-gradient(90deg, var(--main), transparent); }
 
+        /* Pricing */
+        .price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
+        .price-card { background: rgba(0,0,0,0.4); border: 1px solid #222; padding: 20px; border-radius: 15px; text-align: center; border-bottom: 3px solid var(--main); }
+        .price-val { display: block; font-family: 'Orbitron'; font-size: 1.4rem; color: var(--main); margin-top: 5px; }
+
+        /* Dynamic Grids */
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
         .item-card { background: rgba(255,255,255,0.02); padding: 20px; border-radius: 15px; border: 1px solid #333; text-align: center; }
+        .item-card:hover { border-color: var(--main); transform: translateY(-5px); }
         
-        /* Team Photo Style */
-        .pfp-box { width: 80px; height: 80px; background: #000; border: 2px solid var(--main); border-radius: 50%; margin: 0 auto 15px; overflow: hidden; display: flex; align-items: center; justify-content: center; font-family: 'Orbitron'; box-shadow: 0 0 15px var(--main); }
+        .pfp-box { width: 70px; height: 70px; background: #000; border: 2px solid var(--main); border-radius: 50%; margin: 0 auto 15px; overflow: hidden; display: flex; align-items: center; justify-content: center; font-family: 'Orbitron'; box-shadow: 0 0 10px var(--main); }
         .pfp-box img { width: 100%; height: 100%; object-fit: cover; }
 
-        .btn-link { padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 900; font-family: 'Orbitron'; font-size: 0.8rem; margin: 0 10px; display: inline-block; }
-        .btn-discord { background: #5865F2; color: white; }
+        .btn-link { padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 900; font-family: 'Orbitron'; font-size: 0.75rem; display: inline-block; margin: 10px; }
+        .btn-discord { background: #5865F2; color: white; box-shadow: 0 0 15px rgba(88,101,242,0.3); }
         .btn-roblox { background: white; color: black; }
 
         /* Admin */
         #admin-panel { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #050508; z-index: 100000; padding: 40px; direction: rtl; overflow-y: auto; }
+        .admin-box { max-width: 800px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .p-input { width: 100%; padding: 12px; margin: 8px 0; background: #111; border: 1px solid #333; color: var(--main); border-radius: 8px; }
-        .p-btn { width: 100%; padding: 15px; background: var(--main); color: black; border: none; border-radius: 10px; font-weight: 900; cursor: pointer; margin-bottom: 10px; }
+        .p-btn { width: 100%; padding: 12px; background: var(--main); color: black; border: none; border-radius: 8px; font-weight: 900; cursor: pointer; margin-top: 5px; }
     </style>
 </head>
 <body onload="init()">
 
+<div id="global-msg"></div>
 <div class="grid-overlay"></div>
 <canvas id="canvas-bg"></canvas>
 
 <header>
     <div class="glitch">shreky</div>
-    <p style="color: var(--main); letter-spacing: 5px;">[ V11.3 CLOUD ]</p>
+    <p style="color: var(--main); letter-spacing: 5px; font-size: 0.7rem;">[ CLOUD_INTERFACE_v11.4 ]</p>
 </header>
 
 <div class="container">
-    <div class="dynamic-sec" id="project-sec" style="display: block;">
-        <h2 class="section-title">ACTIVE_TASK</h2>
-        <h3 id="p-title" style="margin: 0; font-family: 'Orbitron';">Syncing...</h3>
-        <p>PROGRESS: <span id="p-percent" style="color: var(--main);">0%</span></p>
+    
+    <div class="glass-card">
+        <h2 class="section-title">COMMISSION_RATES</h2>
+        <div class="price-grid">
+            <div class="price-card"><span>BASIC</span><span class="price-val">R$ 100</span></div>
+            <div class="price-card"><span>ADVANCED</span><span class="price-val">R$ 3,500</span></div>
+            <div class="price-card"><span>FULL GAME</span><span class="price-val">DM</span></div>
+        </div>
     </div>
 
-    <div class="dynamic-sec" id="assets-sec">
-        <h2 class="section-title">PROJECT_ARCHIVE</h2>
+    <div class="glass-card" id="project-sec">
+        <h2 class="section-title">CURRENT_WORK</h2>
+        <h3 id="p-title" style="margin:0; font-family:'Orbitron'">Syncing...</h3>
+        <p style="font-size: 0.8rem; opacity: 0.6;">PROGRESS: <span id="p-percent" style="color:var(--main)">0%</span></p>
+    </div>
+
+    <div class="glass-card" id="assets-sec" style="display:none;">
+        <h2 class="section-title">SCRIPT_DATABASE</h2>
         <div class="grid" id="assets-list"></div>
     </div>
 
-    <div class="dynamic-sec" id="team-sec">
+    <div class="glass-card" id="team-sec" style="display:none;">
         <h2 class="section-title">OPERATORS</h2>
         <div class="grid" id="team-list"></div>
     </div>
 
-    <center style="margin-top: 40px;">
+    <center style="margin-top: 50px;">
         <a href="https://discord.com/users/1251423970474065967" target="_blank" class="btn-link btn-discord">DISCORD</a>
         <a href="https://www.roblox.com/users/10023243514/profile" target="_blank" class="btn-link btn-roblox">ROBLOX</a>
     </center>
 </div>
 
 <div id="admin-panel">
-    <h1 style="text-align:center; color:var(--main);">CONTROL CENTER</h1>
-    <div style="max-width: 600px; margin: 0 auto;">
-        <div class="item-card" style="margin-bottom: 20px;">
-            <h3>👥 הוספת צוות</h3>
-            <input type="text" id="t-name" class="p-input" placeholder="שם">
-            <input type="text" id="t-role" class="p-input" placeholder="תפקיד">
-            <input type="text" id="t-img" class="p-input" placeholder="לינק לתמונה (Discord/Imgur)">
-            <button class="p-btn" onclick="addTeam()">הוסף לצוות</button>
+    <h1 style="text-align:center; color:var(--main); font-family:'Orbitron'">CORE_OVERRIDE</h1>
+    <div class="admin-box">
+        <div class="item-card" style="grid-column: span 2;">
+            <h3>📢 הודעה גלובלית</h3>
+            <input type="text" id="adm-msg" class="p-input" placeholder="כתוב הודעה לכל האתרים">
+            <button class="p-btn" onclick="saveMsg()">פרסם הודעה</button>
         </div>
         <div class="item-card">
+            <h3>🚀 עדכון פרויקט</h3>
+            <input type="text" id="adm-p-name" class="p-input" placeholder="שם המשחק">
+            <input type="number" id="adm-p-val" class="p-input" placeholder="אחוז (0-100)">
+            <button class="p-btn" onclick="saveProject()">עדכן</button>
+        </div>
+        <div class="item-card">
+            <h3>👥 הוספת צוות</h3>
+            <input type="text" id="adm-t-name" class="p-input" placeholder="שם">
+            <input type="text" id="adm-t-role" class="p-input" placeholder="תפקיד">
+            <input type="text" id="adm-t-img" class="p-input" placeholder="לינק לתמונה">
+            <button class="p-btn" onclick="addTeam()">הוסף</button>
+        </div>
+        <div class="item-card" style="grid-column: span 2;">
             <h3>📦 הוספת סקריפט</h3>
-            <input type="text" id="a-name" class="p-input" placeholder="שם הסקריפט">
-            <input type="text" id="a-url" class="p-input" placeholder="קישור">
+            <input type="text" id="adm-a-name" class="p-input" placeholder="שם הסקריפט">
+            <input type="text" id="adm-a-url" class="p-input" placeholder="קישור">
             <button class="p-btn" onclick="addAsset()">הוסף סקריפט</button>
-            <button class="p-btn" style="background:#ff4444;" onclick="clearDB()">איפוס נתונים (זהירות!)</button>
+            <button class="p-btn" style="background:#ff4444;" onclick="clearCloud()">מחק הכל (RESET)</button>
         </div>
     </div>
     <center><button class="p-btn" onclick="document.getElementById('admin-panel').style.display='none'" style="width:200px; margin-top:20px;">סגור</button></center>
@@ -112,63 +146,66 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // לוגיקת סנכרון צוות
-    function addTeam() {
-        const name = document.getElementById('t-name').value;
-        const role = document.getElementById('t-role').value;
-        const img = document.getElementById('t-img').value;
-        if(name) db.ref('team').push({ name, role, img });
-    }
+    // -- CLOUD FUNCTIONS --
+    function saveMsg() { db.ref('announcement').set(document.getElementById('adm-msg').value); }
+    function saveProject() { db.ref('project').set({ name: document.getElementById('adm-p-name').value, perc: document.getElementById('adm-p-val').value }); }
+    function addTeam() { db.ref('team').push({ name: document.getElementById('adm-t-name').value, role: document.getElementById('adm-t-role').value, img: document.getElementById('adm-t-img').value }); }
+    function addAsset() { db.ref('assets').push({ name: document.getElementById('adm-a-name').value, url: document.getElementById('adm-a-url').value }); }
+    function clearCloud() { if(confirm("למחוק הכל?")) { db.ref('team').remove(); db.ref('assets').remove(); db.ref('announcement').remove(); } }
+
+    // -- LIVE SYNC --
+    db.ref('announcement').on('value', snap => {
+        const bar = document.getElementById('global-msg');
+        bar.innerText = snap.val() || "";
+        bar.style.display = snap.val() ? 'block' : 'none';
+    });
+
+    db.ref('project').on('value', snap => {
+        const d = snap.val();
+        if(d) { document.getElementById('p-title').innerText = d.name; document.getElementById('p-percent').innerText = d.perc + "%"; }
+    });
 
     db.ref('team').on('value', snap => {
         const list = document.getElementById('team-list');
         const sec = document.getElementById('team-sec');
         list.innerHTML = "";
         if(snap.exists()) {
-            sec.style.display = "block";
+            sec.style.display = 'block';
             snap.forEach(c => {
-                const val = c.val();
-                const avatar = val.img ? `<img src="${val.img}">` : val.name[0];
-                list.innerHTML += `<div class="item-card"><div class="pfp-box">${avatar}</div><h4>${val.name}</h4><p>${val.role}</p></div>`;
+                const v = c.val();
+                const pfp = v.img ? `<img src="${v.img}">` : v.name[0];
+                list.innerHTML += `<div class="item-card"><div class="pfp-box">${pfp}</div><h4>${v.name}</h4><p style="font-size:0.8rem; color:var(--main)">${v.role}</p></div>`;
             });
-        } else { sec.style.display = "none"; }
+        } else { sec.style.display = 'none'; }
     });
-
-    // לוגיקת סנכרון סקריפטים
-    function addAsset() {
-        const name = document.getElementById('a-name').value;
-        const url = document.getElementById('a-url').value;
-        if(name) db.ref('assets').push({ name, url });
-    }
 
     db.ref('assets').on('value', snap => {
         const list = document.getElementById('assets-list');
         const sec = document.getElementById('assets-sec');
         list.innerHTML = "";
         if(snap.exists()) {
-            sec.style.display = "block";
+            sec.style.display = 'block';
             snap.forEach(c => {
-                const val = c.val();
-                list.innerHTML += `<div class="item-card"><h4>${val.name}</h4><a href="${val.url}" target="_blank" style="color:var(--main)">VIEW SOURCE</a></div>`;
+                const v = c.val();
+                list.innerHTML += `<div class="item-card"><h4>${v.name}</h4><a href="${v.url}" target="_blank" style="color:var(--main); font-size:0.7rem;">VIEW SOURCE</a></div>`;
             });
-        } else { sec.style.display = "none"; }
+        } else { sec.style.display = 'none'; }
     });
 
-    function clearDB() { if(confirm("למחוק הכל?")) { db.ref('team').remove(); db.ref('assets').remove(); } }
-
+    // -- CORE --
     function init() {
         const canvas = document.getElementById('canvas-bg');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        let p = []; for(let i=0; i<50; i++) p.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, s: Math.random()*2});
+        let dots = []; for(let i=0; i<40; i++) dots.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, s: Math.random()*2});
         function draw() {
             ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = "#00f3ff";
-            p.forEach(dot => { dot.y -= 0.5; if(dot.y < 0) dot.y = canvas.height; ctx.beginPath(); ctx.arc(dot.x, dot.y, dot.s, 0, Math.PI*2); ctx.fill(); });
+            dots.forEach(d => { d.y -= 0.3; if(d.y<0) d.y=canvas.height; ctx.beginPath(); ctx.arc(d.x, d.y, d.s, 0, Math.PI*2); ctx.fill(); });
             requestAnimationFrame(draw);
         }
         draw();
     }
-    document.addEventListener('keydown', e => { if(e.key === 'a' || e.key === 'A') { if(prompt("ACCESS:")==="678678678") document.getElementById('admin-panel').style.display='block'; } });
+    document.addEventListener('keydown', e => { if(e.key==='a'||e.key==='A') { if(prompt("PASS:")==="678678678") document.getElementById('admin-panel').style.display='block'; } });
 </script>
 </body>
 </html>
